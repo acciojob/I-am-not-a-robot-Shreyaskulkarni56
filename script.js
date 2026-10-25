@@ -5,29 +5,15 @@ const para = document.getElementById("para");
 const imageContainer = document.getElementById("image-container");
 
 const images = [
-  {
-    id: "img1",
-    src: "https://picsum.photos/id/237/200/300"
-  },
-  {
-    id: "img2",
-    src: "https://picsum.photos/seed/picsum/200/300"
-  },
-  {
-    id: "img3",
-    src: "https://picsum.photos/200/300?grayscale"
-  },
-  {
-    id: "img4",
-    src: "https://picsum.photos/200/300/"
-  },
-  {
-    id: "img5",
-    src: "https://picsum.photos/200/300.jpg"
-  }
+  { id: "img1", src: "https://picsum.photos/id/237/200/300" },
+  { id: "img2", src: "https://picsum.photos/seed/picsum/200/300" },
+  { id: "img3", src: "https://picsum.photos/200/300?grayscale" },
+  { id: "img4", src: "https://picsum.photos/200/300/" },
+  { id: "img5", src: "https://picsum.photos/200/300.jpg" }
 ];
 
 let selectedImages = [];
+let verified = false;
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -39,6 +25,8 @@ function shuffle(array) {
 
 function initialize() {
   selectedImages = [];
+  verified = false;
+
   imageContainer.innerHTML = "";
   para.textContent = "";
 
@@ -67,6 +55,9 @@ function initialize() {
     img.classList.add(tile.id);
 
     img.addEventListener("click", () => {
+      if (verified) return;
+
+      // Prevent selecting the same tile twice.
       if (
         selectedImages.some(
           (selected) => selected.dataset.index === img.dataset.index
@@ -75,9 +66,8 @@ function initialize() {
         return;
       }
 
-      if (selectedImages.length >= 2) {
-        return;
-      }
+      // Allow exactly two distinct tile selections.
+      if (selectedImages.length >= 2) return;
 
       selectedImages.push(img);
       img.classList.add("selected");
@@ -107,6 +97,7 @@ verifyBtn.addEventListener("click", () => {
       "We can't verify you as a human. You selected the non-identical tiles.";
   }
 
+  verified = true;
   verifyBtn.hidden = true;
 });
 

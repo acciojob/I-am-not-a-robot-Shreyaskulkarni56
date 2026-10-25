@@ -4,7 +4,28 @@ const verifyBtn = document.getElementById("verify");
 const para = document.getElementById("para");
 const imageContainer = document.getElementById("image-container");
 
-const imageClasses = ["img1", "img2", "img3", "img4", "img5"];
+const images = [
+  {
+    id: "img1",
+    src: "https://picsum.photos/id/237/200/300"
+  },
+  {
+    id: "img2",
+    src: "https://picsum.photos/seed/picsum/200/300"
+  },
+  {
+    id: "img3",
+    src: "https://picsum.photos/200/300?grayscale"
+  },
+  {
+    id: "img4",
+    src: "https://picsum.photos/200/300/"
+  },
+  {
+    id: "img5",
+    src: "https://picsum.photos/200/300.jpg"
+  }
+];
 
 let selectedImages = [];
 
@@ -27,32 +48,30 @@ function initialize() {
   heading.textContent =
     "Please click on the identical tiles to verify that you are not a robot.";
 
-  const duplicateIndex = Math.floor(Math.random() * imageClasses.length);
+  const duplicateIndex = Math.floor(Math.random() * images.length);
 
-  // Each tile has an image identity; the duplicate shares its identity.
-  const images = [
-    ...imageClasses.map((imageClass) => ({
-      imageClass,
-      imageId: imageClass
-    })),
-    {
-      imageClass: imageClasses[duplicateIndex],
-      imageId: imageClasses[duplicateIndex]
-    }
+  const tiles = [
+    ...images.map((image) => ({ ...image })),
+    { ...images[duplicateIndex] }
   ];
 
-  shuffle(images);
+  shuffle(tiles);
 
-  images.forEach((image, index) => {
+  tiles.forEach((tile, index) => {
     const img = document.createElement("img");
 
-    img.classList.add(image.imageClass);
-    img.dataset.index = index;
-    img.dataset.image = image.imageId;
+    img.src = tile.src;
     img.alt = `Image ${index + 1}`;
+    img.dataset.index = index;
+    img.dataset.image = tile.id;
+    img.classList.add(tile.id);
 
     img.addEventListener("click", () => {
-      if (selectedImages.some((selected) => selected.dataset.index === img.dataset.index)) {
+      if (
+        selectedImages.some(
+          (selected) => selected.dataset.index === img.dataset.index
+        )
+      ) {
         return;
       }
 
@@ -77,9 +96,7 @@ function initialize() {
 resetBtn.addEventListener("click", initialize);
 
 verifyBtn.addEventListener("click", () => {
-  if (selectedImages.length !== 2) {
-    return;
-  }
+  if (selectedImages.length !== 2) return;
 
   const [firstImage, secondImage] = selectedImages;
 
